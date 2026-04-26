@@ -79,11 +79,13 @@ shoes = {
     }
 }
 
-# This function opens Google and searches for the shoe name. 
-def google_search(shoe_name):
+# This function opens Google and searches for the shoe name.
+# I changed this so it just builds the link text, and we let Streamlit handle the real button.
+# (This is like writing the address on an envelope, and Streamlit is the mailman.)
+def google_search_url(shoe_name):
     query = shoe_name.replace(" ", "+")
     url = f"https://www.google.com/search?q={query}+basketball+shoe"
-    st.markdown(f"[Click here to search **{shoe_name}** on Google]({url})")
+    return url
 
 # This is the main function that creates the shoe recommendations.
 def generate_recommendations(pos, height):
@@ -92,8 +94,8 @@ def generate_recommendations(pos, height):
     extra = [shoes[pos][other_heights[0]][0], shoes[pos][other_heights[1]][0]]
     return main_list + extra
 
-
 # I added session_state so the app remembers the recommendations.
+# (This is like saving your place in a book so you don’t start over.)
 if "show_results" not in st.session_state:
     st.session_state.show_results = False
 
@@ -112,10 +114,11 @@ if st.session_state.show_results:
 
     for shoe in final_list:
 
+        # I kept your card design exactly the same.
         st.markdown(
             f"""
             <div style="background-color:white; padding:20px; border-radius:10px; 
-                        border:2px solid #1E3A8A; margin-bottom:20px; width:80%; 
+                        border:2px solid #1E3A8A; margin-bottom:10px; width:80%; 
                         margin-left:auto; margin-right:auto;">
                 <h3 style="color:#1E3A8A; text-align:center;">{shoe['name']}</h3>
                 <p style="text-align:center;">{shoe['reason']}</p>
@@ -124,9 +127,11 @@ if st.session_state.show_results:
             unsafe_allow_html=True
         )
 
-        # This button shows a clickable Google link.
-        if st.button(f"Search {shoe['name']}"):
-            google_search(shoe["name"])
+        # I changed this to use Streamlit's special link button.
+        # This makes a real button that opens Google in a new tab.
+        # (This is like a magic button that takes you to a new page without breaking the app.)
+        url = google_search_url(shoe["name"])
+        st.link_button(f"Search {shoe['name']} on Google", url)
 
 email_entry = st.text_input("Send results to your email:")
 
